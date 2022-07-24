@@ -1,0 +1,573 @@
+openapi: 3.0.0
+info:
+  title: InstaClone API
+  version: "1.0"
+  description: |
+    This is a document for InstaClone API
+  contact:
+    name: Naufal Dawam Dz. & Atha DF
+    email: nauma625@gmail.com
+
+externalDocs:
+  description: Find out more
+  url: https://app.swaggerhub.com/apis/dh-atha/InstagramClone/1.0.0
+
+# servers:
+#   - url: virtserver.swaggerhub.com
+
+tags:
+  - name: "User"
+    description: Servis yang mengorganisir data users
+  - name: "Posts"
+    description: Servis yang mengorganisir data postingan
+  - name: "Comments"
+    description: Servis yang mengorganisir data komentar
+
+
+paths:
+  /users:
+    post:
+      summary: Insert New user data
+      description: Create user data
+      tags:
+        - "User"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ModelUser"
+            example:
+              nama: Naufal
+              email: naufal@gmail.com
+              password: naufal123
+      responses:
+        201:
+          $ref: "#/components/responses/201"
+        500:
+          $ref: "#/components/responses/500"
+    get:
+      summary: Get All User
+      description: Menampilkan seluruh data user
+      tags:
+        - "User"
+      responses:
+        '200':
+          description: Success get all data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ModelUser"
+              example:
+                message: success get all data
+                data:
+                  - id: 1
+                    nama: Naufal
+                    email: naufal@gmail.com
+                    profile_picture_path: 0.0.0.0:8000/uploads/profile_picture/naufal.jpg
+                  - id: 2
+                    nama: Atha
+                    email: atha@gmail.com
+                    profile_picture_path: 0.0.0.0:8000/uploads/profile_picture/default.jpg
+        '500':
+          $ref: "#/components/responses/500"
+  /users/{user_id}:
+    get:
+      summary: Get User data by user_id
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+      tags:
+        - "User"
+      responses:
+        '200':
+          description: Success get user data
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/ModelUser"
+              example:
+                id: 1
+                nama: naufal
+                email: naufal@gmail.com
+                profile_picture_path: 0.0.0.0:8000/uploads/profile_picture/naufal.jpg
+        '500':
+          $ref: "#/components/responses/500"
+  /login:
+    post:
+      description: user login
+      tags:
+        - "User"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ModelUser"
+            example:
+              email: naufal@gmail.com
+              password: naufal123
+      responses:
+        200: 
+          description: Success login
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/ModelUser"
+              example:
+                message: "login success"
+                data:
+                  token: generateJWToken
+        500:
+          $ref: "#/components/responses/500"
+  /profile:
+    get:
+      security:
+        - bearerAuth: []
+      summary: Get Profile
+      description: Menampilkan seluruh data user
+      tags:
+        - "User"
+      responses:
+        '200':
+          description: Success get data
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                message: success get data
+                data:
+                  id: 1
+                  nama: naufal
+                  email: naufal@gmail.com
+                  profile_picture_path: 0.0.0.0:8000/uploads/profile_picture/naufal.jpg
+                  address: Jakarta
+                  gender: true
+                  bod: 1 juli 1996
+        '500':
+          $ref: "#/components/responses/500"
+    put:
+      description: string update
+      tags:
+        - "User"
+      security:
+        - bearerAuth: []
+      summary: Update profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                id:
+                  type: integer
+                nama:
+                  type: string
+                email:
+                  type: string
+                password: 
+                  type: string
+                address:
+                  type: string
+                gender:
+                  type: boolean
+                bod:
+                  type: string
+            example:
+              id: 1
+              nama: naufal
+              email: naufal@gmail.com
+              password: naufal123
+              address: Jakarta
+              gender: true
+              bod: 1 juli 1996
+      responses:
+        '201':
+          description: Success update user data
+          content:
+            application/json:
+              schema:
+                type: object
+                $ref: "#/components/schemas/ModelUser"
+              example:
+                message: success get data
+                data:
+                  id: 1
+                  nama: naufal
+                  email: naufal@gmail.com
+                  address: Jakarta
+                  gender: true
+                  bod: 1 juli 1996
+        '500':
+          $ref: "#/components/responses/500"
+    delete:
+      summary: Delete profile / account
+      security:
+        - bearerAuth: []
+      tags:
+        - "User"
+      responses:
+        '200':
+          description: Success delete user data
+          content:
+            application/json:
+              schema:
+                type: string
+              example:
+                success delete data
+        '500':
+          $ref: "#/components/responses/500"
+  /profilepic:
+    put: 
+      security:
+        - bearerAuth: [] 
+      summary: Update profilepic only
+      tags:
+        - "User"
+      requestBody:
+        content:
+          image/png:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: profile picture updated
+          content:
+            application/json:
+              schema: 
+                type: string
+              example:
+                profile picture updated
+        500:
+          $ref: "#/components/responses/500"
+
+  /posts:
+    get:
+      summary: Get All Posts
+      tags:
+        - "Posts"
+      responses:
+        200: 
+          description: success get all Posts
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: "#/components/schemas/ModelPosts"
+              example:
+                message: success get all posts
+                data:
+                  - id: 1
+                    user_id: 1
+                    caption: postingan pertama naufal
+                    created_at: 25 juli 2022
+                    updated_at: 26 juli 2022
+                    post_images: 
+                      - 0.0.0.0:8000/uploads/post_images/1.jpg
+                      - 0.0.0.0:8000/uploads/post_images/2.jpg
+                      - 0.0.0.0:8000/uploads/post_images/3.jpg
+                  - id: 2
+                    user_id: 1
+                    caption: postingan kedua naufal
+                    created_at: 27 juli 2022
+                    updated_at: 27 juli 2022
+                    post_images: 
+                      - 0.0.0.0:8000/uploads/post_images/4.jpg
+        '500':
+          $ref: "#/components/responses/500"
+  /posts/{post_id}:
+    get:
+      summary: Get Post details (include comments)
+      tags:
+        - "Posts"
+      responses:
+        '200':
+          description: Success get post details 
+          content:
+            application/json:
+              example:
+                message: success get post details
+                data: 
+                  id: 1
+                  user_id: 1
+                  caption: postingan pertama naufal
+                  created_at: 25 juli 2022
+                  updated_at: 26 juli 2022
+                  post_images: 
+                    - 0.0.0.0:8000/uploads/post_images/1.jpg
+                    - 0.0.0.0:8000/uploads/post_images/2.jpg
+                    - 0.0.0.0:8000/uploads/post_images/3.jpg
+                  comments: 
+                    - id: 1
+                      post_id: 1
+                      user_id: 2
+                      username: atha
+                      caption: mantap mas naufal
+                      created_at: 25 juli 2022
+                      updated_at: 25 juli 2022
+                    - id: 2
+                      post_id: 1
+                      user_id: 1
+                      username: naufal
+                      caption: terimakasih mas atha
+                      created_at: 25 juli 2022
+                      updated_at: 25 juli 2022
+        '500':
+          $ref: "#/components/responses/500"
+  
+  /myposts:
+    post:
+      security:
+        - bearerAuth: [] 
+      summary: Add Post 
+      tags:
+        - "Posts"
+      requestBody: 
+        content:
+          multipart/form-data:
+            schema: 
+              type: object
+              properties:
+                caption:
+                  type: string
+                filename:
+                  type: array
+            example:
+              caption: postingan pertama naufal
+              filename:
+                - yahaha.png
+                - asjdhahsjd.png
+                - sjdbfdsjhfb.png
+      responses:
+        '200':
+          description: success add post
+          content:
+            application/json:
+              example:
+                message: "success add post"
+                data:
+                  id: 1
+                  user_id: 1
+                  caption: postingan pertama naufal
+                  created_at: 25 juli 2022
+                  updated_at: 25 juli 2022
+                  post_images: 
+                    - 0.0.0.0:8000/uploads/post_images/1.jpg
+                    - 0.0.0.0:8000/uploads/post_images/2.jpg
+                    - 0.0.0.0:8000/uploads/post_images/3.jpg
+        '500':
+          $ref: "#/components/responses/500"
+    get:
+      summary: Get All My Posts
+      security:
+        - bearerAuth: []
+      tags:
+        - "Posts"
+      responses:
+        200: 
+          description: success get all MyPosts
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: "#/components/schemas/ModelPosts"
+              example:
+                message: success get all MyPosts
+                data:
+                  - id: 1
+                    user_id: 1
+                    caption: postingan pertama naufal
+                    created_at: 25 juli 2022
+                    updated_at: 26 juli 2022
+                    post_images: 
+                      - 0.0.0.0:8000/uploads/post_images/1.jpg
+                      - 0.0.0.0:8000/uploads/post_images/2.jpg
+                      - 0.0.0.0:8000/uploads/post_images/3.jpg
+                  - id: 2
+                    user_id: 1
+                    caption: postingan kedua naufal
+                    created_at: 27 juli 2022
+                    updated_at: 27 juli 2022
+                    post_images: 
+                      - 0.0.0.0:8000/uploads/post_images/4.jpg
+        '500':
+          $ref: "#/components/responses/500"
+    put: 
+      summary: Update Post
+      security:
+        - bearerAuth: []
+      tags:
+        - "Posts"
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              type: string
+            example:
+              caption: edit postingan pertama naufal
+      responses:
+        '200':
+          description: edit postingan pertama berhasil
+          content:
+            application/json:
+              example:
+                message: success update post
+                data: 
+                  id: 1
+                  caption: edit postingan pertama naufal
+        '500':
+          $ref: "#/components/responses/500"
+    delete:
+      summary: Delete Post
+      security:
+        - bearerAuth: []
+      tags:
+        - "Posts"
+      responses:
+        '200':
+          description: success delete post
+          content:
+            application/json:
+              example:
+                message: success delete post
+        '500':
+          $ref: "#/components/responses/500"
+  
+  /comments:
+    post:
+      summary: Add Comment
+      security:
+        - bearerAuth: []
+      tags:
+        - "Comments"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ModelComments"
+            example:
+              comment_caption: mantap mas naufal
+      responses:
+        '200':
+          description: success add comment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModelComments"
+              example:
+                id: 1
+                user_id: 2
+                post_id: 1
+                username: atha
+                comment_caption: mantap mas naufal
+                created_at: 25 juli 2022
+        '500':
+          $ref: "#/components/responses/500"
+    # get:
+    #   summary: Get All Comments for post
+    #   tags:
+    #     - "Comments"
+    #   responses:
+    #     '500':
+    #       $ref: "#/components/responses/500"
+    delete:
+      summary: Delete comment
+      security:
+        - bearerAuth: []
+      tags:
+        - "Comments"
+      responses:
+        '200':
+          description: success delete comment
+          content:
+            application/json:
+              example:
+                "success delete comment"
+        '500':
+          $ref: "#/components/responses/500"
+
+
+components:
+  securitySchemes:
+    bearerAuth:
+      description: JWT Authentication
+      type: http
+      scheme: bearer
+      bearerFormat: "JWT"
+  schemas:
+    ModelUser:
+      type: object
+      properties:
+        id:
+          type: integer
+        nama:
+          type: string
+        email:
+          type: string
+        password: 
+          type: string
+        profile_picture_path:
+          type: string
+        address:
+          type: string
+        gender:
+          type: boolean
+        bod:
+          type: string
+    ModelPosts:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: string
+        caption:
+          type: string
+        created_at: 
+          type: string
+        updated_at:
+          type: string
+    ModelComments:
+      type: object
+      properties:
+        id: 
+          type: integer
+        user_id:
+          type: integer
+        post_id:
+          type: integer
+        comment_caption:
+          type: string
+        created_at:
+          type: string
+  responses:
+    201: 
+      description: "Insert success"
+      content:
+        application/json:
+          schema: 
+            type: object
+            $ref: "#/components/schemas/ModelUser"
+          example:
+            message: Insert new data success
+            data: 
+              id: 1
+              nama: naufal
+              email: naufal@gmail.com
+    500:
+      description: "Gagal mengolah data pada server"
+      content:
+        application/json:
+          schema:
+              type: string
+          example:
+            Terjadi kesalahan pada server
+            
