@@ -10,3 +10,17 @@ type User struct {
 	Gender               bool   `json:"gender" form:"gender"`
 	Bod                  string `json:"bod" form:"bod"`
 }
+
+type UserUsecase interface {
+	Register(newUser User) (User, error)
+	Login(data User) (User, error)
+	GetAllUser() ([]User, error)
+	GetSpecificUser(id uint) (User, error)
+}
+
+type UserData interface {
+	Insert(newUser User) (User, error)
+	Login(data User) (User, error)
+	GetAll() ([]User, error)
+	GetSpecific(id uint) (User, error)
+}

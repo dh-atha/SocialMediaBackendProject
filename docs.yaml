@@ -225,7 +225,7 @@ paths:
         - User
       requestBody:
         content:
-          image/png:
+          multipart/form-data:
             schema:
               type: string
       responses:
@@ -334,6 +334,7 @@ paths:
               properties:
                 caption:
                   type: string
+                  description: ini untuk caption
                 filename:
                   type: array
                   items:
