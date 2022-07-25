@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"socialmediabackendproject/config"
+	"socialmediabackendproject/factory"
 	"socialmediabackendproject/infrastructure/database/mysql"
 
 	"github.com/labstack/echo/v4"
@@ -14,9 +15,7 @@ func main() {
 	mysql.MigrateData(db)
 	e := echo.New()
 
-	e.GET("", func(c echo.Context) error {
-		return nil
-	})
+	factory.InitFactory(e, db)
 
 	fmt.Println("Menjalankan program...")
 	dsn := fmt.Sprintf(":%d", config.SERVERPORT)

@@ -1,7 +1,10 @@
 package usecase
 
 import (
+	"log"
 	"socialmediabackendproject/domain"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 type userUsecase struct {
@@ -15,7 +18,14 @@ func New(ud domain.UserData) domain.UserUsecase {
 }
 
 func (us *userUsecase) Register(newUser domain.User) (domain.User, error) {
-	return domain.User{}, nil
+	hashed, err := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Println("error encrpt password", err)
+		return domain.User{}, err
+	}
+	newUser.Password = string(hashed)
+	data, err := us.userData.Insert(newUser)
+	return data, err
 }
 
 func (us *userUsecase) Login(data domain.User) (domain.User, error) {
