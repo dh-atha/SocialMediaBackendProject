@@ -1,55 +1,52 @@
 openapi: 3.0.0
 info:
   title: InstaClone API
-  version: "1.0"
+  version: 1.0.0-oas3
   description: |
     This is a document for InstaClone API
   contact:
     name: Naufal Dawam Dz. & Atha DF
     email: nauma625@gmail.com
-
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/InstaCloneAlta/InstaClone/1.0.0-oas3
 externalDocs:
   description: Find out more
-  url: https://app.swaggerhub.com/apis/dh-atha/InstagramClone/1.0.0
-
-# servers:
-#   - url: virtserver.swaggerhub.com
-
+  url: https://app.swaggerhub.com/apis-docs/InstaCloneAlta/InstaClone/1.0.0-oas3
 tags:
-  - name: "User"
+  - name: User
     description: Servis yang mengorganisir data users
-  - name: "Posts"
+  - name: Posts
     description: Servis yang mengorganisir data postingan
-  - name: "Comments"
+  - name: Comments
     description: Servis yang mengorganisir data komentar
-
-
 paths:
   /users:
     post:
       summary: Insert New user data
       description: Create user data
       tags:
-        - "User"
+        - User
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ModelUser"
+              $ref: '#/components/schemas/ModelUser'
             example:
               nama: Naufal
               email: naufal@gmail.com
               password: naufal123
       responses:
-        201:
-          $ref: "#/components/responses/201"
-        500:
-          $ref: "#/components/responses/500"
+        '201':
+          $ref: '#/components/responses/201'
+        '500':
+          $ref: '#/components/responses/500'
     get:
       summary: Get All User
       description: Menampilkan seluruh data user
       tags:
-        - "User"
+        - User
       responses:
         '200':
           description: Success get all data
@@ -58,7 +55,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/ModelUser"
+                  $ref: '#/components/schemas/ModelUser'
               example:
                 message: success get all data
                 data:
@@ -71,7 +68,7 @@ paths:
                     email: atha@gmail.com
                     profile_picture_path: 0.0.0.0:8000/uploads/profile_picture/default.jpg
         '500':
-          $ref: "#/components/responses/500"
+          $ref: '#/components/responses/500'
   /users/{user_id}:
     get:
       summary: Get User data by user_id
@@ -82,49 +79,47 @@ paths:
           schema:
             type: integer
       tags:
-        - "User"
+        - User
       responses:
         '200':
           description: Success get user data
           content:
             application/json:
               schema:
-                type: object
-                $ref: "#/components/schemas/ModelUser"
+                $ref: '#/components/schemas/ModelUser'
               example:
                 id: 1
                 nama: naufal
                 email: naufal@gmail.com
                 profile_picture_path: 0.0.0.0:8000/uploads/profile_picture/naufal.jpg
         '500':
-          $ref: "#/components/responses/500"
+          $ref: '#/components/responses/500'
   /login:
     post:
       description: user login
       tags:
-        - "User"
+        - User
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ModelUser"
+              $ref: '#/components/schemas/ModelUser'
             example:
               email: naufal@gmail.com
               password: naufal123
       responses:
-        200: 
+        '200':
           description: Success login
           content:
             application/json:
               schema:
-                type: object
-                $ref: "#/components/schemas/ModelUser"
+                $ref: '#/components/schemas/ModelUser'
               example:
-                message: "login success"
+                message: login success
                 data:
                   token: generateJWToken
-        500:
-          $ref: "#/components/responses/500"
+        '500':
+          $ref: '#/components/responses/500'
   /profile:
     get:
       security:
@@ -132,7 +127,7 @@ paths:
       summary: Get Profile
       description: Menampilkan seluruh data user
       tags:
-        - "User"
+        - User
       responses:
         '200':
           description: Success get data
@@ -151,11 +146,11 @@ paths:
                   gender: true
                   bod: 1 juli 1996
         '500':
-          $ref: "#/components/responses/500"
+          $ref: '#/components/responses/500'
     put:
       description: string update
       tags:
-        - "User"
+        - User
       security:
         - bearerAuth: []
       summary: Update profile
@@ -171,7 +166,7 @@ paths:
                   type: string
                 email:
                   type: string
-                password: 
+                password:
                   type: string
                 address:
                   type: string
@@ -193,8 +188,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                $ref: "#/components/schemas/ModelUser"
+                $ref: '#/components/schemas/ModelUser'
               example:
                 message: success get data
                 data:
@@ -205,13 +199,13 @@ paths:
                   gender: true
                   bod: 1 juli 1996
         '500':
-          $ref: "#/components/responses/500"
+          $ref: '#/components/responses/500'
     delete:
       summary: Delete profile / account
       security:
         - bearerAuth: []
       tags:
-        - "User"
+        - User
       responses:
         '200':
           description: Success delete user data
@@ -219,17 +213,16 @@ paths:
             application/json:
               schema:
                 type: string
-              example:
-                success delete data
+              example: success delete data
         '500':
-          $ref: "#/components/responses/500"
+          $ref: '#/components/responses/500'
   /profilepic:
-    put: 
+    put:
       security:
-        - bearerAuth: [] 
+        - bearerAuth: []
       summary: Update profilepic only
       tags:
-        - "User"
+        - User
       requestBody:
         content:
           image/png:
@@ -240,27 +233,25 @@ paths:
           description: profile picture updated
           content:
             application/json:
-              schema: 
+              schema:
                 type: string
-              example:
-                profile picture updated
-        500:
-          $ref: "#/components/responses/500"
-
+              example: profile picture updated
+        '500':
+          $ref: '#/components/responses/500'
   /posts:
     get:
       summary: Get All Posts
       tags:
-        - "Posts"
+        - Posts
       responses:
-        200: 
+        '200':
           description: success get all Posts
           content:
             application/json:
-              schema: 
+              schema:
                 type: array
-                items: 
-                  $ref: "#/components/schemas/ModelPosts"
+                items:
+                  $ref: '#/components/schemas/ModelPosts'
               example:
                 message: success get all posts
                 data:
@@ -269,7 +260,7 @@ paths:
                     caption: postingan pertama naufal
                     created_at: 25 juli 2022
                     updated_at: 26 juli 2022
-                    post_images: 
+                    post_images:
                       - 0.0.0.0:8000/uploads/post_images/1.jpg
                       - 0.0.0.0:8000/uploads/post_images/2.jpg
                       - 0.0.0.0:8000/uploads/post_images/3.jpg
@@ -278,33 +269,40 @@ paths:
                     caption: postingan kedua naufal
                     created_at: 27 juli 2022
                     updated_at: 27 juli 2022
-                    post_images: 
+                    post_images:
                       - 0.0.0.0:8000/uploads/post_images/4.jpg
         '500':
-          $ref: "#/components/responses/500"
+          $ref: '#/components/responses/500'
   /posts/{post_id}:
     get:
       summary: Get Post details (include comments)
+      parameters: 
+        - in: path
+          name: post_id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the post to get
       tags:
-        - "Posts"
+        - Posts
       responses:
         '200':
-          description: Success get post details 
+          description: Success get post details
           content:
             application/json:
               example:
                 message: success get post details
-                data: 
+                data:
                   id: 1
                   user_id: 1
                   caption: postingan pertama naufal
                   created_at: 25 juli 2022
                   updated_at: 26 juli 2022
-                  post_images: 
+                  post_images:
                     - 0.0.0.0:8000/uploads/post_images/1.jpg
                     - 0.0.0.0:8000/uploads/post_images/2.jpg
                     - 0.0.0.0:8000/uploads/post_images/3.jpg
-                  comments: 
+                  comments:
                     - id: 1
                       post_id: 1
                       user_id: 2
@@ -320,25 +318,26 @@ paths:
                       created_at: 25 juli 2022
                       updated_at: 25 juli 2022
         '500':
-          $ref: "#/components/responses/500"
-  
+          $ref: '#/components/responses/500'
   /myposts:
     post:
       security:
-        - bearerAuth: [] 
-      summary: Add Post 
+        - bearerAuth: []
+      summary: Add Post
       tags:
-        - "Posts"
-      requestBody: 
+        - Posts
+      requestBody:
         content:
           multipart/form-data:
-            schema: 
+            schema:
               type: object
               properties:
                 caption:
                   type: string
                 filename:
                   type: array
+                  items:
+                    type: string
             example:
               caption: postingan pertama naufal
               filename:
@@ -351,34 +350,34 @@ paths:
           content:
             application/json:
               example:
-                message: "success add post"
+                message: success add post
                 data:
                   id: 1
                   user_id: 1
                   caption: postingan pertama naufal
                   created_at: 25 juli 2022
                   updated_at: 25 juli 2022
-                  post_images: 
+                  post_images:
                     - 0.0.0.0:8000/uploads/post_images/1.jpg
                     - 0.0.0.0:8000/uploads/post_images/2.jpg
                     - 0.0.0.0:8000/uploads/post_images/3.jpg
         '500':
-          $ref: "#/components/responses/500"
+          $ref: '#/components/responses/500'
     get:
       summary: Get All My Posts
       security:
         - bearerAuth: []
       tags:
-        - "Posts"
+        - Posts
       responses:
-        200: 
+        '200':
           description: success get all MyPosts
           content:
             application/json:
-              schema: 
+              schema:
                 type: array
-                items: 
-                  $ref: "#/components/schemas/ModelPosts"
+                items:
+                  $ref: '#/components/schemas/ModelPosts'
               example:
                 message: success get all MyPosts
                 data:
@@ -387,7 +386,7 @@ paths:
                     caption: postingan pertama naufal
                     created_at: 25 juli 2022
                     updated_at: 26 juli 2022
-                    post_images: 
+                    post_images:
                       - 0.0.0.0:8000/uploads/post_images/1.jpg
                       - 0.0.0.0:8000/uploads/post_images/2.jpg
                       - 0.0.0.0:8000/uploads/post_images/3.jpg
@@ -396,20 +395,20 @@ paths:
                     caption: postingan kedua naufal
                     created_at: 27 juli 2022
                     updated_at: 27 juli 2022
-                    post_images: 
+                    post_images:
                       - 0.0.0.0:8000/uploads/post_images/4.jpg
         '500':
-          $ref: "#/components/responses/500"
-    put: 
+          $ref: '#/components/responses/500'
+    put:
       summary: Update Post
       security:
         - bearerAuth: []
       tags:
-        - "Posts"
+        - Posts
       requestBody:
         content:
           application/json:
-            schema: 
+            schema:
               type: string
             example:
               caption: edit postingan pertama naufal
@@ -420,17 +419,17 @@ paths:
             application/json:
               example:
                 message: success update post
-                data: 
+                data:
                   id: 1
                   caption: edit postingan pertama naufal
         '500':
-          $ref: "#/components/responses/500"
+          $ref: '#/components/responses/500'
     delete:
       summary: Delete Post
       security:
         - bearerAuth: []
       tags:
-        - "Posts"
+        - Posts
       responses:
         '200':
           description: success delete post
@@ -439,20 +438,19 @@ paths:
               example:
                 message: success delete post
         '500':
-          $ref: "#/components/responses/500"
-  
+          $ref: '#/components/responses/500'
   /comments:
     post:
       summary: Add Comment
       security:
         - bearerAuth: []
       tags:
-        - "Comments"
+        - Comments
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ModelComments"
+              $ref: '#/components/schemas/ModelComments'
             example:
               comment_caption: mantap mas naufal
       responses:
@@ -461,7 +459,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ModelComments"
+                $ref: '#/components/schemas/ModelComments'
               example:
                 id: 1
                 user_id: 2
@@ -470,38 +468,28 @@ paths:
                 comment_caption: mantap mas naufal
                 created_at: 25 juli 2022
         '500':
-          $ref: "#/components/responses/500"
-    # get:
-    #   summary: Get All Comments for post
-    #   tags:
-    #     - "Comments"
-    #   responses:
-    #     '500':
-    #       $ref: "#/components/responses/500"
+          $ref: '#/components/responses/500'
     delete:
       summary: Delete comment
       security:
         - bearerAuth: []
       tags:
-        - "Comments"
+        - Comments
       responses:
         '200':
           description: success delete comment
           content:
             application/json:
-              example:
-                "success delete comment"
+              example: success delete comment
         '500':
-          $ref: "#/components/responses/500"
-
-
+          $ref: '#/components/responses/500'
 components:
   securitySchemes:
     bearerAuth:
       description: JWT Authentication
       type: http
       scheme: bearer
-      bearerFormat: "JWT"
+      bearerFormat: JWT
   schemas:
     ModelUser:
       type: object
@@ -512,7 +500,7 @@ components:
           type: string
         email:
           type: string
-        password: 
+        password:
           type: string
         profile_picture_path:
           type: string
@@ -531,14 +519,14 @@ components:
           type: string
         caption:
           type: string
-        created_at: 
+        created_at:
           type: string
         updated_at:
           type: string
     ModelComments:
       type: object
       properties:
-        id: 
+        id:
           type: integer
         user_id:
           type: integer
@@ -549,25 +537,22 @@ components:
         created_at:
           type: string
   responses:
-    201: 
-      description: "Insert success"
-      content:
-        application/json:
-          schema: 
-            type: object
-            $ref: "#/components/schemas/ModelUser"
-          example:
-            message: Insert new data success
-            data: 
-              id: 1
-              nama: naufal
-              email: naufal@gmail.com
-    500:
-      description: "Gagal mengolah data pada server"
+    '201':
+      description: Insert success
       content:
         application/json:
           schema:
-              type: string
+            $ref: '#/components/schemas/ModelUser'
           example:
-            Terjadi kesalahan pada server
-            
+            message: Insert new data success
+            data:
+              id: 1
+              nama: naufal
+              email: naufal@gmail.com
+    '500':
+      description: Gagal mengolah data pada server
+      content:
+        application/json:
+          schema:
+            type: string
+          example: Terjadi kesalahan pada server
