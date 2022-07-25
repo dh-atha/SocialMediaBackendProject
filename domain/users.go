@@ -13,14 +13,14 @@ type User struct {
 
 type UserUsecase interface {
 	Register(newUser User) (User, error)
-	Login(data User) (User, error)
+	Login(data User) (User, string, error)
 	GetAllUser() ([]User, error)
 	GetSpecificUser(id uint) (User, error)
 }
 
 type UserData interface {
 	Insert(newUser User) (User, error)
-	Login(data User) (User, error)
+	Login(data User) (User, string, error)
 	GetAll() ([]User, error)
 	GetSpecific(id uint) (User, error)
 }

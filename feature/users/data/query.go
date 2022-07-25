@@ -32,8 +32,14 @@ func (ud *userData) Insert(newUser domain.User) (domain.User, error) {
 	return newData.ToDomain(), nil
 }
 
-func (us *userData) Login(data domain.User) (domain.User, error) {
-	return domain.User{}, nil
+func (ud *userData) Login(data domain.User) (domain.User, string, error) {
+	var loginData User
+	err := ud.db.Where("email = ?", data.Email).First(&loginData).Error
+	if err != nil {
+		return domain.User{}, "", errors.New(data.Email + " not registered")
+	}
+
+	return loginData.ToDomain(), loginData.Password, nil
 }
 
 func (ud *userData) GetSpecific(id uint) (domain.User, error) {
