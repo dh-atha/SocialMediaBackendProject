@@ -1,8 +1,10 @@
 package usecase
 
 import (
+	"errors"
 	"log"
 	"socialmediabackendproject/domain"
+	"socialmediabackendproject/feature/common"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -20,7 +22,7 @@ func New(ud domain.UserData) domain.UserUsecase {
 func (us *userUsecase) Register(newUser domain.User) (domain.User, error) {
 	hashed, err := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
 	if err != nil {
-		log.Println("error encrpt password", err)
+		log.Println("error encrypt password", err)
 		return domain.User{}, err
 	}
 	newUser.Password = string(hashed)
@@ -28,8 +30,18 @@ func (us *userUsecase) Register(newUser domain.User) (domain.User, error) {
 	return data, err
 }
 
-func (us *userUsecase) Login(data domain.User) (domain.User, error) {
-	return domain.User{}, nil
+func (us *userUsecase) Login(data domain.User) (domain.User, string, error) {
+	_, password, err := us.userData.Login(data)
+	if err != nil {
+		return domain.User{}, "", err
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(password), []byte(data.Password))
+	if err != nil {
+		return domain.User{}, "", errors.New("wrong password")
+	}
+
+	return data, common.GenerateToken(int(data.ID)), nil
 }
 
 func (us *userUsecase) GetAllUser() ([]domain.User, error) {

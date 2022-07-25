@@ -43,7 +43,22 @@ func (uh *userHandler) Register() echo.HandlerFunc {
 
 func (uh *userHandler) Login() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return nil
+		var loginData domain.User
+		err := c.Bind(&loginData)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, "error parsing data")
+		}
+
+		data, token, err := uh.userUsecase.Login(loginData)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "success login",
+			"data":    data,
+			"token":   token,
+		})
 	}
 }
 
