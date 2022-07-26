@@ -28,14 +28,14 @@ jobs:
         with:
           push: true
           tags: atha02/socmedbackend:latest
-      - 
-        name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.KEYSAYA }}
-          port: ${{ secrets.PORT }}
-          script: |
-            cd project
-            docker-compose down --rmi all --remove-orphans && docker-compose up -d --remove-orphans
+#       - 
+#         name: executing remote ssh commands using password
+#         uses: appleboy/ssh-action@master
+#         with:
+#           host: ${{ secrets.HOST }}
+#           username: ${{ secrets.USERNAME }}
+#           key: ${{ secrets.KEYSAYA }}
+#           port: ${{ secrets.PORT }}
+#           script: |
+#             cd project
+#             docker-compose down --rmi all --remove-orphans && docker-compose up -d --remove-orphans
