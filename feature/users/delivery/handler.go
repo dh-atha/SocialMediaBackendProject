@@ -2,10 +2,14 @@ package delivery
 
 import (
 	"net/http"
+	"socialmediabackendproject/config"
 	"socialmediabackendproject/domain"
+	"socialmediabackendproject/feature/common"
+	"socialmediabackendproject/feature/middlewares"
 	"strconv"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 type userHandler struct {
@@ -16,10 +20,12 @@ func New(e *echo.Echo, us domain.UserUsecase) {
 	handler := &userHandler{
 		userUsecase: us,
 	}
+	useJWT := middleware.JWTWithConfig(middlewares.UseJWT([]byte(config.SECRET)))
 	e.POST("/login", handler.Login())
 	e.POST("/users", handler.Register())
 	e.GET("/users", handler.GetAllUser())
 	e.GET("/users/:id", handler.GetSpecificUser())
+	e.GET("/profile", handler.MyProfile(), useJWT)
 }
 
 func (uh *userHandler) Register() echo.HandlerFunc {
@@ -88,6 +94,7 @@ func (uh *userHandler) GetSpecificUser() echo.HandlerFunc {
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
+
 		data, err := uh.userUsecase.GetSpecificUser(uint(id))
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
@@ -95,6 +102,21 @@ func (uh *userHandler) GetSpecificUser() echo.HandlerFunc {
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message": "success get specific user",
+			"data":    ToGetSpecificUser(data),
+		})
+	}
+}
+
+func (uh *userHandler) MyProfile() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id := common.ExtractData(c)
+		data, err := uh.userUsecase.GetSpecificUser(uint(id))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "success showing my profile",
 			"data":    ToGetSpecificUser(data),
 		})
 	}
