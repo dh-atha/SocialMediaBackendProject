@@ -56,7 +56,7 @@ func (uh *userHandler) Login() echo.HandlerFunc {
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message": "success login",
-			"data":    data,
+			"data":    ToGetUser(data),
 			"token":   token,
 		})
 	}
@@ -64,7 +64,20 @@ func (uh *userHandler) Login() echo.HandlerFunc {
 
 func (uh *userHandler) GetAllUser() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return nil
+		data, err := uh.userUsecase.GetAllUser()
+		if err != nil {
+			return c.JSON(http.StatusNotFound, err)
+		}
+
+		var convertToGetUser []GetUser
+		for i := 0; i < len(data); i++ {
+			convertToGetUser = append(convertToGetUser, ToGetUser(data[i]))
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "success get all users data",
+			"data":    convertToGetUser,
+		})
 	}
 }
 

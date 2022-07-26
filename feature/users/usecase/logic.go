@@ -31,7 +31,7 @@ func (us *userUsecase) Register(newUser domain.User) (domain.User, error) {
 }
 
 func (us *userUsecase) Login(data domain.User) (domain.User, string, error) {
-	_, password, err := us.userData.Login(data)
+	userData, password, err := us.userData.Login(data)
 	if err != nil {
 		return domain.User{}, "", err
 	}
@@ -41,11 +41,15 @@ func (us *userUsecase) Login(data domain.User) (domain.User, string, error) {
 		return domain.User{}, "", errors.New("wrong password")
 	}
 
-	return data, common.GenerateToken(int(data.ID)), nil
+	return userData, common.GenerateToken(int(data.ID)), nil
 }
 
 func (us *userUsecase) GetAllUser() ([]domain.User, error) {
-	return []domain.User{}, nil
+	data, err := us.userData.GetAll()
+	if err != nil {
+		return []domain.User{}, err
+	}
+	return data, nil
 }
 
 func (us *userUsecase) GetSpecificUser(id uint) (domain.User, error) {
