@@ -23,7 +23,6 @@ type GetSpecificUser struct {
 	Name                 string
 	Email                string
 	Profile_picture_path string
-	Address              string
 	Gender               bool
 	Bod                  string
 }

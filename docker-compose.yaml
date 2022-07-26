@@ -1,0 +1,14 @@
+services:
+  socmedbackend:
+    image: atha02/socmedbackend
+    environment:
+      SECRET: "R4h@s1A!"
+      SERVERPORT: 8000
+      Name: "instaclone"
+      Address: "instaclone.c1nrn31lr6qm.ap-southeast-1.rds.amazonaws.com"
+      Port: 3306   
+      Username: "admin"
+      Password: "rootadmin"
+    # restart: always
+    ports:
+      - 8001:8000
