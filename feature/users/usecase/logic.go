@@ -41,7 +41,7 @@ func (us *userUsecase) Login(data domain.User) (domain.User, string, error) {
 		return domain.User{}, "", errors.New("wrong password")
 	}
 
-	return userData, common.GenerateToken(int(data.ID)), nil
+	return userData, common.GenerateToken(int(userData.ID)), nil
 }
 
 func (us *userUsecase) GetAllUser() ([]domain.User, error) {
