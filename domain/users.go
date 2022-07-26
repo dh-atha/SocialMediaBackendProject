@@ -15,6 +15,7 @@ type UserUsecase interface {
 	Login(data User) (User, string, error)
 	GetAllUser() ([]User, error)
 	GetSpecificUser(id uint) (User, error)
+	UpdateUser(id uint, data User) (User, error)
 }
 
 type UserData interface {
@@ -22,4 +23,5 @@ type UserData interface {
 	Login(data User) (User, string, error)
 	GetAll() ([]User, error)
 	GetSpecific(id uint) (User, error)
+	UpdateUser(id uint, data User) (User, error)
 }

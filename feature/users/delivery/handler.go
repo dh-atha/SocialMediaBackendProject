@@ -121,3 +121,6 @@ func (uh *userHandler) MyProfile() echo.HandlerFunc {
 		})
 	}
 }
+
+
+// func (uh *userHandler) UpdateUser() belum selesai

@@ -7,3 +7,12 @@ type Post struct {
 	Created_At string
 	Updated_At string
 }
+
+type PostUsecase interface {
+	GetSpecificPost (id uint) (Post, error)
+}
+
+type PostData interface {
+	GetSpecificPost (id uint) (Post, error)
+	UserInsertPost (id int) (Post, error)
+}

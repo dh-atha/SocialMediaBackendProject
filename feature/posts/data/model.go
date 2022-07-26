@@ -1,6 +1,7 @@
 package data
 
 import (
+	"socialmediabackendproject/domain"
 	commentData "socialmediabackendproject/feature/comments/data"
 	"socialmediabackendproject/feature/post_images/data"
 
@@ -13,4 +14,18 @@ type Post struct {
 	Caption    string                `json:"caption" form:"caption"`
 	Post_Image []data.Post_Image     `gorm:"foreignKey:Post_ID"`
 	Comment    []commentData.Comment `gorm:"foreignKey:Post_ID"`
+}
+
+func ToEntity(data domain.Post) Post {
+	return Post{
+		User_ID:              data.User_ID,
+		Caption:              data.Caption,
+	}
+}
+
+func (u *Post) ToDomain() domain.Post{
+	return domain.Post{
+		User_ID:              u.User_ID,
+		Caption:              u.Caption,
+	}
 }
