@@ -14,7 +14,6 @@ type User struct {
 	Email                string `json:"email" form:"email"`
 	Password             string `json:"password" form:"password"`
 	Profile_picture_path string
-	Address              string                `json:"address" form:"address"`
 	Gender               bool                  `json:"gender" form:"gender"`
 	Bod                  string                `json:"bod" form:"bod"`
 	Post                 []data.Post           `gorm:"foreignKey:User_ID"`
@@ -27,7 +26,6 @@ func ToEntity(data domain.User) User {
 		Email:                data.Email,
 		Password:             data.Password,
 		Profile_picture_path: data.Profile_picture_path,
-		Address:              data.Address,
 		Gender:               data.Gender,
 		Bod:                  data.Bod,
 	}
@@ -40,7 +38,6 @@ func (u *User) ToDomain() domain.User {
 		Email:                u.Email,
 		Password:             u.Password,
 		Profile_picture_path: u.Profile_picture_path,
-		Address:              u.Address,
 		Gender:               u.Gender,
 		Bod:                  u.Bod,
 	}

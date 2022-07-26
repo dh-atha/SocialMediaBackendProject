@@ -34,7 +34,6 @@ func ToGetSpecificUser(data domain.User) GetSpecificUser {
 		Name:                 data.Name,
 		Email:                data.Email,
 		Profile_picture_path: data.Profile_picture_path,
-		Address:              data.Address,
 		Gender:               data.Gender,
 		Bod:                  data.Bod,
 	}
