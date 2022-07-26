@@ -42,10 +42,21 @@ func (ud *userData) Login(data domain.User) (domain.User, string, error) {
 	return loginData.ToDomain(), loginData.Password, nil
 }
 
-func (ud *userData) GetSpecific(id uint) (domain.User, error) {
-	return domain.User{}, nil
+func (ud *userData) GetAll() ([]domain.User, error) {
+	var allData []User
+	ud.db.Find(&allData)
+	if len(allData) < 1 {
+		return []domain.User{}, errors.New("no data found")
+	}
+
+	var convertToDomain []domain.User
+	for i := 0; i < len(allData); i++ {
+		convertToDomain = append(convertToDomain, allData[i].ToDomain())
+	}
+
+	return convertToDomain, nil
 }
 
-func (ud *userData) GetAll() ([]domain.User, error) {
-	return []domain.User{}, nil
+func (ud *userData) GetSpecific(id uint) (domain.User, error) {
+	return domain.User{}, nil
 }
