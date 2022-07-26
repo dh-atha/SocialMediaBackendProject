@@ -3,6 +3,7 @@ package delivery
 import (
 	"net/http"
 	"socialmediabackendproject/domain"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -83,6 +84,18 @@ func (uh *userHandler) GetAllUser() echo.HandlerFunc {
 
 func (uh *userHandler) GetSpecificUser() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return nil
+		id, err := strconv.Atoi(c.Param("id"))
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+		data, err := uh.userUsecase.GetSpecificUser(uint(id))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "success get specific user",
+			"data":    ToGetSpecificUser(data),
+		})
 	}
 }

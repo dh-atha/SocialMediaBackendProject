@@ -46,12 +46,10 @@ func (us *userUsecase) Login(data domain.User) (domain.User, string, error) {
 
 func (us *userUsecase) GetAllUser() ([]domain.User, error) {
 	data, err := us.userData.GetAll()
-	if err != nil {
-		return []domain.User{}, err
-	}
-	return data, nil
+	return data, err
 }
 
 func (us *userUsecase) GetSpecificUser(id uint) (domain.User, error) {
-	return domain.User{}, nil
+	data, err := us.userData.GetSpecific(id)
+	return data, err
 }
