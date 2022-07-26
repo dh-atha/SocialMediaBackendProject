@@ -11,4 +11,4 @@ services:
       Password: "rootadmin"
     # restart: always
     ports:
-      - 8001:8000
+      - 80:8000
