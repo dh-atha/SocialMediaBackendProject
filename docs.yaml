@@ -117,7 +117,11 @@ paths:
               example:
                 message: login success
                 data:
-                  token: generateJWToken
+                  id: 1
+                  name: naufal
+                  email: naufal@gmail.com
+                  profile_picture_path: "0.0.0.0:8000/uploads/profile_picture/naufal.jpg"
+                token: generateJWToken
         '500':
           $ref: '#/components/responses/500'
   /profile:
@@ -225,7 +229,7 @@ paths:
         - User
       requestBody:
         content:
-          multipart/form-data:
+          image/png:
             schema:
               type: string
       responses:
@@ -334,7 +338,8 @@ paths:
               properties:
                 caption:
                   type: string
-                  description: ini untuk caption
+                  description: ini caption
+                  example: ini contoh
                 filename:
                   type: array
                   items:

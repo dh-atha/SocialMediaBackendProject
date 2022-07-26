@@ -58,5 +58,11 @@ func (ud *userData) GetAll() ([]domain.User, error) {
 }
 
 func (ud *userData) GetSpecific(id uint) (domain.User, error) {
-	return domain.User{}, nil
+	var data User
+	err := ud.db.Where("id = ?", id).First(&data).Error
+	if err != nil {
+		return domain.User{}, err
+	}
+
+	return data.ToDomain(), nil
 }
