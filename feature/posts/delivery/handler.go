@@ -5,7 +5,7 @@ import (
 	"socialmediabackendproject/domain"
 	"strconv"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 type postHandler struct {
@@ -32,7 +32,7 @@ func (ps *postHandler) GetSpecificPost() echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
-			"message": "success get specific user",
+			"message": "success get specific post",
 			"data":    ToGetSpecificPost(data),
 		})
 	}

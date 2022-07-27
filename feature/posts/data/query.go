@@ -3,6 +3,8 @@ package data
 import (
 	// "errors"
 
+	// "errors"
+	"log"
 	"socialmediabackendproject/domain"
 
 	"gorm.io/gorm"
@@ -25,4 +27,15 @@ func (pd *postData) GetSpecific(id uint) (domain.Post, error) {
 		return domain.Post{}, err
 	}
 	return data.ToDomain(), nil
+}
+
+func (pd *postData) UpdatePost(id uint, updatePost domain.Post) (domain.Post, error) {
+	cnv := FromModel(updatePost)
+	err := pd.db.Model(&Post{}).Where("id = ?", id).Updates(cnv).Error
+	if err != nil {
+		log.Println("Cannot update post caption", err.Error())
+		return domain.Post{}, err
+	}
+	cnv.ID = id
+	return cnv.ToDomain(), nil
 }

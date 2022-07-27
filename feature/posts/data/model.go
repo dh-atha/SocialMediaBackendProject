@@ -29,3 +29,11 @@ func (u *Post) ToDomain() domain.Post{
 		Caption:              u.Caption,
 	}
 }
+
+func FromModel(data domain.Post) Post {
+	var res Post
+	res.ID = uint(data.ID)
+	res.User_ID = data.User_ID
+	res.Caption = data.Caption
+	return res
+}

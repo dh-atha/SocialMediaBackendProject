@@ -5,6 +5,10 @@ import (
 	userDelivery "socialmediabackendproject/feature/users/delivery"
 	userUsecase "socialmediabackendproject/feature/users/usecase"
 
+	postData "socialmediabackendproject/feature/posts/data"
+	postDelivery "socialmediabackendproject/feature/posts/delivery"
+	postUsecase "socialmediabackendproject/feature/posts/usecase"
+
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/gorm"
@@ -20,4 +24,8 @@ func InitFactory(e *echo.Echo, db *gorm.DB) {
 	userData := usersData.New(db)
 	useCase := userUsecase.New(userData)
 	userDelivery.New(e, useCase)
+
+	postData := postData.New(db)
+	useCasePost := postUsecase.New(postData)
+	postDelivery.New(e, useCasePost)
 }
