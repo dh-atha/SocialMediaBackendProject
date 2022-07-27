@@ -1,6 +1,7 @@
 package delivery
 
 import (
+	"log"
 	"net/http"
 	"socialmediabackendproject/config"
 	"socialmediabackendproject/domain"
@@ -8,6 +9,7 @@ import (
 	"socialmediabackendproject/feature/middlewares"
 	"strconv"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -30,13 +32,19 @@ func New(e *echo.Echo, us domain.UserUsecase) {
 
 func (uh *userHandler) Register() echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var newUser domain.User
+		var newUser Register
 		err := c.Bind(&newUser)
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, "error parsing data")
 		}
 
-		data, err := uh.userUsecase.Register(newUser)
+		err = validator.New().Struct(newUser)
+		if err != nil {
+			log.Println(err)
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+
+		data, err := uh.userUsecase.Register(newUser.ToDomain())
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error())
 		}
