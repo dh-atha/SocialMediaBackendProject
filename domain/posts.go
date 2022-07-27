@@ -9,10 +9,9 @@ type Post struct {
 }
 
 type PostUsecase interface {
-	GetSpecificPost (id uint) (Post, error)
+	GetSpecificPost(id uint) (Post, error)
 }
 
 type PostData interface {
-	GetSpecificPost (id uint) (Post, error)
-	UserInsertPost (id int) (Post, error)
+	GetSpecific(id uint) (Post, error)
 }

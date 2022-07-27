@@ -57,14 +57,14 @@ func (ud *userData) GetAll() ([]domain.User, error) {
 	return convertToDomain, nil
 }
 
-func (ud *userData) GetSpecific(id uint) (domain.User, error) {
-	var data User
-	err := ud.db.Where("id = ?", id).First(&data).Error
-	if err != nil {
-		return domain.User{}, err
-	}
+	func (ud *userData) GetSpecific(id uint) (domain.User, error) {
+		var data User
+		err := ud.db.Where("id = ?", id).First(&data).Error
+		if err != nil {
+			return domain.User{}, err
+		}
 
-	return data.ToDomain(), nil
-}
+		return data.ToDomain(), nil
+	}
 
 

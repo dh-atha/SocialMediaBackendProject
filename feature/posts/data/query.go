@@ -1,23 +1,28 @@
 package data
 
-// import (
-// 	"errors"
-// 	"socialmediabackendproject/domain"
+import (
+	// "errors"
 
-// 	"gorm.io/gorm"
-// )
+	"socialmediabackendproject/domain"
 
-// type postData struct{
-// 	db *gorm.DB
-// }
+	"gorm.io/gorm"
+)
 
-// func New(DB *gorm.DB) domain.PostData {
-// 	return &postData{
-// 		db: DB,
-// 	}
-// }
+type postData struct {
+	db *gorm.DB
+}
 
-// func (pd *postData) insertPost(newPost domain.Post) (domain.Post, error){
-// 	var newPost Post = ToEntity(newPost)
-// 	res := up.db.Where("id = ?", ).
-// }
+func New(DB *gorm.DB) domain.PostData {
+	return &postData{
+		db: DB,
+	}
+}
+
+func (pd *postData) GetSpecific(id uint) (domain.Post, error) {
+	var data Post
+	err := pd.db.Where("id = ?", id).First(&data).Error
+	if err != nil {
+		return domain.Post{}, err
+	}
+	return data.ToDomain(), nil
+}
