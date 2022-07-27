@@ -34,13 +34,14 @@ func (ph *postHandler) GetAllPosts() echo.HandlerFunc {
 		var GetAllPostsResponse []GetAllPost
 		for i := 0; i < len(data); i++ {
 			GetAllPostsResponse = append(GetAllPostsResponse, GetAllPost{
-				ID:          data[i].ID,
-				User_ID:     data[i].User_ID,
-				Username:    username[i],
-				Caption:     data[i].Caption,
-				Created_At:  data[i].Created_At,
-				Updated_At:  data[i].Updated_At,
-				Post_Images: postimages[i],
+				ID:                   data[i].ID,
+				User_ID:              data[i].User_ID,
+				Username:             username[i].Name,
+				Profile_picture_path: username[i].Profile_picture_path,
+				Caption:              data[i].Caption,
+				Created_At:           data[i].Created_At,
+				Updated_At:           data[i].Updated_At,
+				Post_Images:          postimages[i],
 			})
 		}
 

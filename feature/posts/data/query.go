@@ -17,27 +17,27 @@ func New(DB *gorm.DB) domain.PostData {
 	}
 }
 
-func (pd *postData) GetAll() ([]domain.Post, []string, [][]string, error) {
+func (pd *postData) GetAll() ([]domain.Post, []domain.User, [][]string, error) {
 	var data []Post
 	pd.db.Find(&data)
 	if len(data) < 1 {
-		return []domain.Post{}, []string{}, [][]string{}, errors.New("no data found")
+		return []domain.Post{}, []domain.User{}, [][]string{}, errors.New("no data found")
 	}
 
 	var domainData []domain.Post
-	var username []string
+	var userdata []domain.User
 	var postimages [][]string
 	for i := 0; i < len(data); i++ {
 		domainData = append(domainData, data[i].ToDomain())
-		var tmpusername string
-		pd.db.Raw("SELECT name FROM users WHERE id = ?", data[i].User_ID).Scan(&tmpusername)
-		username = append(username, tmpusername)
+		var tmpuserdata domain.User
+		pd.db.Raw("SELECT name, profile_picture_path FROM users WHERE id = ?", data[i].User_ID).Scan(&tmpuserdata)
+		userdata = append(userdata, tmpuserdata)
 		var tmpimages []string
 		pd.db.Raw("SELECT image_path FROM post_images WHERE post_id = ?", data[i].ID).Scan(&tmpimages)
 		postimages = append(postimages, tmpimages)
 	}
 
-	return domainData, username, postimages, nil
+	return domainData, userdata, postimages, nil
 }
 
 func (pd *postData) Insert(data domain.Post) (domain.Post, error) {

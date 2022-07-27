@@ -12,9 +12,9 @@ func New(pd domain.PostData) domain.PostUsecase {
 	}
 }
 
-func (ps *postUsecase) GetAllPosts() ([]domain.Post, []string, [][]string, error) {
-	data, username, post_images, err := ps.postData.GetAll()
-	return data, username, post_images, err
+func (ps *postUsecase) GetAllPosts() ([]domain.Post, []domain.User, [][]string, error) {
+	data, userdata, post_images, err := ps.postData.GetAll()
+	return data, userdata, post_images, err
 }
 
 func (ps *postUsecase) AddPost(id uint, data domain.Post) (domain.Post, error) {
