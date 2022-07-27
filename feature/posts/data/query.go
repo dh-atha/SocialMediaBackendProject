@@ -50,4 +50,24 @@ func (pd *postData) Insert(data domain.Post) (domain.Post, error) {
 	return postData.ToDomain(), nil
 }
 
-// func (pd *postData) GetPostsByID(id uint) ([])
+func (pd *postData) GetPostsByID(id uint) ([]domain.Post, domain.User, [][]string, error) {
+	var postData []Post
+	pd.db.Where("user_id", id).Find(&postData)
+	if len(postData) < 1 {
+		return []domain.Post{}, domain.User{}, [][]string{}, errors.New("no postData found")
+	}
+
+	var userData domain.User
+	pd.db.Raw("SELECT name, profile_picture_path FROM users WHERE id = ?", id).Scan(&userData)
+
+	var postConvertToDomain []domain.Post
+	var postimages [][]string
+	for i := 0; i < len(postData); i++ {
+		postConvertToDomain = append(postConvertToDomain, postData[i].ToDomain())
+		var tmpimages []string
+		pd.db.Raw("SELECT image_path FROM post_images WHERE post_id = ?", postData[i].ID).Scan(&tmpimages)
+		postimages = append(postimages, tmpimages)
+	}
+
+	return postConvertToDomain, userData, postimages, nil
+}
