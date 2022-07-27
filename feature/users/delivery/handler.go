@@ -8,6 +8,7 @@ import (
 	"socialmediabackendproject/feature/common"
 	"socialmediabackendproject/feature/middlewares"
 	"strconv"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
@@ -28,6 +29,7 @@ func New(e *echo.Echo, us domain.UserUsecase) {
 	e.GET("/users", handler.GetAllUser())
 	e.GET("/users/:id", handler.GetSpecificUser())
 	e.GET("/profile", handler.MyProfile(), useJWT)
+	e.DELETE("/profile", handler.DeleteUser(), useJWT)
 }
 
 func (uh *userHandler) Register() echo.HandlerFunc {
@@ -129,3 +131,28 @@ func (uh *userHandler) MyProfile() echo.HandlerFunc {
 		})
 	}
 }
+
+func (uh *userHandler) DeleteUser() echo.HandlerFunc {
+	return func(c echo.Context) error {
+
+		id := common.ExtractData(c)
+		data, err := uh.userUsecase.DeletedUser(uint(id))
+
+		if err != nil {
+			if strings.Contains(err.Error(), "not found") {
+				return c.JSON(http.StatusNotFound, err.Error())
+			} else {
+				return c.JSON(http.StatusInternalServerError, err.Error())
+			}
+		}
+
+		if !data {
+			return c.JSON(http.StatusInternalServerError, "cannot delete")
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "success delete user",
+		})
+	}
+}
+

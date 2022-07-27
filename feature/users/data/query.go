@@ -2,6 +2,7 @@ package data
 
 import (
 	"errors"
+	"log"
 	"socialmediabackendproject/domain"
 
 	"gorm.io/gorm"
@@ -67,4 +68,17 @@ func (ud *userData) GetSpecific(id uint) (domain.User, error) {
 	return data.ToDomain(), nil
 }
 
+func (ud *userData) DeletedUser(id uint) bool {
+	res := ud.db.Where("ID = ?", id).Delete(&User{})
+	if res.Error != nil {
+		log.Println("Cannot delete data", res.Error.Error())
+		return false
+	}
 
+	if res.RowsAffected < 1 {
+		log.Println("No data deleted", res.Error.Error())
+		return false
+	}
+
+	return true
+}

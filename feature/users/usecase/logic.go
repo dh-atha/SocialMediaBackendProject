@@ -54,3 +54,12 @@ func (us *userUsecase) GetSpecificUser(id uint) (domain.User, error) {
 	return data, err
 }
 
+func (us *userUsecase) DeletedUser(id uint) (bool, error) {
+	res := us.userData.DeletedUser(id)
+
+	if !res {
+		return false, errors.New("failed delete")
+	}
+
+	return true, nil
+}
