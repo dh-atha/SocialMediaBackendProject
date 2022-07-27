@@ -13,11 +13,11 @@ type Post struct {
 type PostUsecase interface {
 	GetAllPosts() ([]Post, []User, [][]string, error)
 	AddPost(id uint, data Post) (Post, error)
-	// GetMyPosts(id uint) ([]Post, error)
+	GetMyPosts(id uint) ([]Post, User, [][]string, error)
 }
 
 type PostData interface {
 	GetAll() ([]Post, []User, [][]string, error)
 	Insert(data Post) (Post, error)
-	// GetPostsByID(id uint) ([]Post, [][]string, error)
+	GetPostsByID(id uint) ([]Post, User, [][]string, error)
 }

@@ -1,13 +1,17 @@
 package delivery
 
 import (
+	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"os"
 	"socialmediabackendproject/config"
 	"socialmediabackendproject/domain"
 	"socialmediabackendproject/feature/common"
 	"socialmediabackendproject/feature/middlewares"
 	"strconv"
+	"strings"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
@@ -28,6 +32,7 @@ func New(e *echo.Echo, us domain.UserUsecase) {
 	e.GET("/users", handler.GetAllUser())
 	e.GET("/users/:id", handler.GetSpecificUser())
 	e.GET("/profile", handler.MyProfile(), useJWT)
+	e.PUT("/profilepic", handler.UpdateProfilePic(), useJWT)
 }
 
 func (uh *userHandler) Register() echo.HandlerFunc {
@@ -127,5 +132,39 @@ func (uh *userHandler) MyProfile() echo.HandlerFunc {
 			"message": "success showing my profile",
 			"data":    ToGetSpecificUser(data),
 		})
+	}
+}
+
+func (uh *userHandler) UpdateProfilePic() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id := common.ExtractData(c)
+		data, err := uh.userUsecase.GetSpecificUser(uint(id))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+
+		file, err := c.FormFile("profilepic")
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error()+"error parsing data")
+		}
+		src, err := file.Open()
+		if err != nil {
+			return err
+		}
+		defer src.Close()
+
+		// Destination
+		getExt := strings.Split(file.Filename, ".")
+		dst, err := os.Create(fmt.Sprint("uploads/profilepic/", strconv.Itoa(int(data.ID)), "-", data.Name, ".", getExt[len(getExt)-1]))
+		if err != nil {
+			return err
+		}
+		defer dst.Close()
+
+		// Copy
+		if _, err = io.Copy(dst, src); err != nil {
+			return err
+		}
+		return c.JSON(http.StatusOK, "success update profile picture")
 	}
 }
