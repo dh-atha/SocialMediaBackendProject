@@ -6,7 +6,7 @@ type Register struct {
 	Name     string `json:"name" form:"name" validate:"required"`
 	Email    string `json:"email" form:"email" validate:"required,email"`
 	Password string `json:"password" form:"password" validate:"required"`
-	Gender   bool   `json:"gender" form:"gender" validate:"required"`
+	Gender   bool   `json:"gender" form:"gender"`
 	Bod      string `json:"bod" form:"bod" validate:"required"`
 }
 
