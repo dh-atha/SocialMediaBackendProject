@@ -10,10 +10,10 @@ import (
 
 type User struct {
 	gorm.Model
-	Name                 string `json:"name" form:"name"`
-	Email                string `json:"email" form:"email"`
-	Password             string `json:"password" form:"password"`
-	Profile_picture_path string
+	Name                 string                `json:"name" form:"name"`
+	Email                string                `json:"email" form:"email"`
+	Password             string                `json:"password" form:"password"`
+	Profile_picture_path string                `gorm:"default:https://instaclonegroupprojectalta.s3.ap-southeast-1.amazonaws.com/profilepic/user.png"`
 	Gender               bool                  `json:"gender" form:"gender"`
 	Bod                  string                `json:"bod" form:"bod"`
 	Post                 []data.Post           `gorm:"foreignKey:User_ID"`
