@@ -54,28 +54,3 @@ func (us *userUsecase) GetSpecificUser(id uint) (domain.User, error) {
 	return data, err
 }
 
-// masih ada yg eror keburu abis billing wkwkwkw
-// ===============================
-func (us *userUsecase) UpdateUser(id uint, updateUser domain.User) (domain.User, error) {
-	new_id := uint(id)
-	if id != new_id {
-		return domain.User{}, errors.New("invalid user")
-	}
-
-	hashed, err := bcrypt.GenerateFromPassword([]byte(updateUser.Password), bcrypt.DefaultCost)
-	// err = bcrypt.CompareHashAndPassword([]byte(upassword), []byte(data.Password))
-
-	if err != nil {
-		log.Println("error encrpt password", err)
-		return domain.User{}, err
-	}
-
-	UpdateUser.Password = string(hashed)
-	res := us.userData.UpdateUser(id,domain.User{})
-
-	if res.ID == 0 {
-		return domain.User{}, errors.New("error update user")
-	}
-
-	return res, nil
-}

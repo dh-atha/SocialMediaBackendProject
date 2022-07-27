@@ -67,14 +67,4 @@ func (ud *userData) GetSpecific(id uint) (domain.User, error) {
 	return data.ToDomain(), nil
 }
 
-func (ud *userData) UpdateUser(id uint, updateData domain.User) (domain.User, error) {
-	var cnv = ToEntity(updateData)
-	err := ud.db.Where("id = ?", id).Updates(updateData).Error
-	if err != nil{
-		// log.Println("Cannot update data", err.Error())
-		return domain.User{},err
-	}
-	updateData.ID = id
-	return cnv.ToDomain(),err
-}
 
