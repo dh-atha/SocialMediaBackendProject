@@ -25,6 +25,7 @@ func New(e *echo.Echo, us domain.UserUsecase) {
 	e.POST("/users", handler.Register())
 	e.GET("/users", handler.GetAllUser())
 	e.GET("/users/:id", handler.GetSpecificUser())
+	e.PUT("/profile",handler.UpdateUser(), useJWT)
 	e.GET("/profile", handler.MyProfile(), useJWT)
 }
 
@@ -123,4 +124,21 @@ func (uh *userHandler) MyProfile() echo.HandlerFunc {
 }
 
 
-// func (uh *userHandler) UpdateUser() belum selesai
+func (uh *userHandler) UpdateUser() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var updateUser domain.User
+		err := c.Bind(&updateUser)
+		id := common.ExtractData(c)
+		
+		data, err := uh.userUsecase.UpdateUser(uint(id), updateUser)
+
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, err.Error())
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "user updated",
+			"data":    data,
+		})
+	}
+}
