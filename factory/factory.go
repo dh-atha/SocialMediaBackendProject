@@ -1,6 +1,9 @@
 package factory
 
 import (
+	postsData "socialmediabackendproject/feature/posts/data"
+	postDelivery "socialmediabackendproject/feature/posts/delivery"
+	postUsecase "socialmediabackendproject/feature/posts/usecase"
 	usersData "socialmediabackendproject/feature/users/data"
 	userDelivery "socialmediabackendproject/feature/users/delivery"
 	userUsecase "socialmediabackendproject/feature/users/usecase"
@@ -20,4 +23,8 @@ func InitFactory(e *echo.Echo, db *gorm.DB) {
 	userData := usersData.New(db)
 	useCase := userUsecase.New(userData)
 	userDelivery.New(e, useCase)
+
+	postData := postsData.New(db)
+	postUsecase := postUsecase.New(postData)
+	postDelivery.New(e, postUsecase)
 }
