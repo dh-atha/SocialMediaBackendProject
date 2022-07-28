@@ -17,6 +17,7 @@ type PostUsecase interface {
 	GetMyPosts(id uint) ([]Post, User, [][]string, error)
 	GetSpecificPost(id uint) (Post, User, []string, []Comment, []User, error)
 	UpdatePost(id uint, updateData Post) (Post, error)
+	DeletePost(id uint, userID uint) error
 }
 
 type PostData interface {
@@ -25,4 +26,5 @@ type PostData interface {
 	GetAllPostsByID(id uint) ([]Post, User, [][]string, error)
 	GetPostByID(id uint) (Post, User, []string, []Comment, []User, error)
 	Update(id uint, updatePost Post) (Post, error)
+	Delete(id uint, userID uint) error
 }

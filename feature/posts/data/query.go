@@ -117,3 +117,23 @@ func (pd *postData) Update(id uint, updateData domain.Post) (domain.Post, error)
 
 	return currentData.ToDomain(), nil
 }
+
+func (pd *postData) Delete(id uint, userID uint) error {
+	var postData Post
+	err := pd.db.Where("id = ?", id).First(&postData).Error
+	if err != nil {
+		return err
+	}
+
+	if postData.User_ID != userID {
+		return errors.New("post not yours")
+	}
+
+	err = pd.db.Delete(&postData).Error
+	if err != nil {
+		return err
+	}
+
+	pd.db.Exec("UPDATE comments SET deleted_at = now() WHERE post_id = ?", id)
+	return nil
+}
