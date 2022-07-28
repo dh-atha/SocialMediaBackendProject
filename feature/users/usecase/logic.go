@@ -66,3 +66,8 @@ func (us *userUsecase) UpdateUser(data domain.User, id uint) (domain.User, error
 	updateData, err := us.userData.Update(data, id)
 	return updateData, err
 }
+
+func (us *userUsecase) DeleteUser(id uint) error {
+	err := us.userData.Delete(id)
+	return err
+}
