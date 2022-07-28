@@ -95,3 +95,11 @@ func (ud *userData) Delete(id uint) error {
 
 	return nil
 }
+
+func (ud *userData) UpdateProfilePic(data domain.User) error {
+	err := ud.db.Save(&data).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}

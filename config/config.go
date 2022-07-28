@@ -10,12 +10,16 @@ import (
 )
 
 type AppConfig struct {
-	Driver   string
-	Name     string
-	Address  string
-	Port     int
-	Username string
-	Password string
+	Driver                string
+	Name                  string
+	Address               string
+	Port                  int
+	Username              string
+	Password              string
+	AWS_REGION            string
+	AWS_ACCESS_KEY_ID     string
+	AWS_SECRET_ACCESS_KEY string
+	BUCKET_NAME           string
 }
 
 var lock = &sync.Mutex{}
@@ -58,6 +62,9 @@ func initConfig() *AppConfig {
 		return nil
 	}
 	defaultConfig.Port = cnv
-
+	defaultConfig.AWS_REGION = os.Getenv("AWS_REGION")
+	defaultConfig.AWS_ACCESS_KEY_ID = os.Getenv("AWS_ACCESS_KEY_ID")
+	defaultConfig.AWS_SECRET_ACCESS_KEY = os.Getenv("AWS_SECRET_ACCESS_KEY")
+	defaultConfig.BUCKET_NAME = os.Getenv("BUCKET_NAME")
 	return &defaultConfig
 }

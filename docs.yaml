@@ -37,6 +37,8 @@ paths:
               nama: Naufal
               email: naufal@gmail.com
               password: naufal123
+              gender: true
+              bod: 01-07-2000
       responses:
         '201':
           $ref: '#/components/responses/201'
@@ -88,10 +90,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/ModelUser'
               example:
-                id: 1
-                nama: naufal
-                email: naufal@gmail.com
-                profile_picture_path: 0.0.0.0:8000/uploads/profile_picture/naufal.jpg
+                message: success get spesific user
+                data:
+                  id: 1
+                  nama: naufal
+                  email: naufal@gmail.com
+                  profile_picture_path: 0.0.0.0:8000/uploads/profile_picture/naufal.jpg
+                  address: jakarta
+                  gender: true
+                  bod: 
         '500':
           $ref: '#/components/responses/500'
   /login:
@@ -229,9 +236,12 @@ paths:
         - User
       requestBody:
         content:
-          image/png:
+          multipart/form-data:
             schema:
-              type: string
+              type: object
+              properties:
+                profile_picture:
+                  type: string
       responses:
         '200':
           description: profile picture updated
@@ -261,6 +271,8 @@ paths:
                 data:
                   - id: 1
                     user_id: 1
+                    username: naufal
+                    profile_picture_path: url.com
                     caption: postingan pertama naufal
                     created_at: 25 juli 2022
                     updated_at: 26 juli 2022
@@ -270,6 +282,8 @@ paths:
                       - 0.0.0.0:8000/uploads/post_images/3.jpg
                   - id: 2
                     user_id: 1
+                    username: naufal
+                    profile_picture_path: url.com
                     caption: postingan kedua naufal
                     created_at: 27 juli 2022
                     updated_at: 27 juli 2022
@@ -299,6 +313,8 @@ paths:
                 data:
                   id: 1
                   user_id: 1
+                  username: naufal
+                  profile_picture_path: url.com
                   caption: postingan pertama naufal
                   created_at: 25 juli 2022
                   updated_at: 26 juli 2022
@@ -308,19 +324,15 @@ paths:
                     - 0.0.0.0:8000/uploads/post_images/3.jpg
                   comments:
                     - id: 1
-                      post_id: 1
-                      user_id: 2
                       username: atha
+                      profile_picture_path: url.com
                       caption: mantap mas naufal
                       created_at: 25 juli 2022
-                      updated_at: 25 juli 2022
                     - id: 2
-                      post_id: 1
-                      user_id: 1
                       username: naufal
+                      profile_picture_path: url.com
                       caption: terimakasih mas atha
                       created_at: 25 juli 2022
-                      updated_at: 25 juli 2022
         '500':
           $ref: '#/components/responses/500'
   /myposts:
@@ -340,16 +352,10 @@ paths:
                   type: string
                   description: ini caption
                   example: ini contoh
-                filename:
+                post_images:
                   type: array
                   items:
                     type: string
-            example:
-              caption: postingan pertama naufal
-              filename:
-                - yahaha.png
-                - asjdhahsjd.png
-                - sjdbfdsjhfb.png
       responses:
         '200':
           description: success add post
@@ -389,15 +395,16 @@ paths:
                 data:
                   - id: 1
                     user_id: 1
+                    username: naufal
+                    profile_picture_path: url.com
                     caption: postingan pertama naufal
                     created_at: 25 juli 2022
                     updated_at: 26 juli 2022
-                    post_images:
-                      - 0.0.0.0:8000/uploads/post_images/1.jpg
-                      - 0.0.0.0:8000/uploads/post_images/2.jpg
-                      - 0.0.0.0:8000/uploads/post_images/3.jpg
+                    post_images: 
                   - id: 2
                     user_id: 1
+                    username: naufal
+                    profile_picture_path: url.com
                     caption: postingan kedua naufal
                     created_at: 27 juli 2022
                     updated_at: 27 juli 2022
@@ -405,7 +412,15 @@ paths:
                       - 0.0.0.0:8000/uploads/post_images/4.jpg
         '500':
           $ref: '#/components/responses/500'
+  /myposts/{post_id}:
     put:
+      parameters: 
+        - in: path
+          name: post_id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the post to get
       summary: Update Post
       security:
         - bearerAuth: []
@@ -431,6 +446,13 @@ paths:
         '500':
           $ref: '#/components/responses/500'
     delete:
+      parameters: 
+        - in: path
+          name: post_id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the post to get
       summary: Delete Post
       security:
         - bearerAuth: []
@@ -445,8 +467,15 @@ paths:
                 message: success delete post
         '500':
           $ref: '#/components/responses/500'
-  /comments:
+  /comments/{post_id}:
     post:
+      parameters: 
+        - in: path
+          name: post_id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the post to get
       summary: Add Comment
       security:
         - bearerAuth: []
@@ -458,7 +487,7 @@ paths:
             schema:
               $ref: '#/components/schemas/ModelComments'
             example:
-              comment_caption: mantap mas naufal
+              caption: mantap mas naufal
       responses:
         '200':
           description: success add comment
@@ -470,12 +499,19 @@ paths:
                 id: 1
                 user_id: 2
                 post_id: 1
-                username: atha
-                comment_caption: mantap mas naufal
+                caption: mantap mas naufal
                 created_at: 25 juli 2022
         '500':
           $ref: '#/components/responses/500'
+  /comments/{comment_id}:
     delete:
+      parameters: 
+        - in: path
+          name: comment_id
+          schema:
+            type: integer
+          required: true
+          description: Numeric ID of the comment to delete
       summary: Delete comment
       security:
         - bearerAuth: []
@@ -555,6 +591,8 @@ components:
               id: 1
               nama: naufal
               email: naufal@gmail.com
+              gender: true
+              bod: 01-07-2000
     '500':
       description: Gagal mengolah data pada server
       content:

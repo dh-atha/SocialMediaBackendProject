@@ -2,10 +2,8 @@ package delivery
 
 import (
 	"fmt"
-	"io"
 	"log"
 	"net/http"
-	"os"
 	"socialmediabackendproject/config"
 	"socialmediabackendproject/domain"
 	"socialmediabackendproject/feature/common"
@@ -13,6 +11,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -177,28 +178,51 @@ func (uh *userHandler) UpdateProfilePic() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
 
+		session := c.Get("session").(*session.Session)
+		bucket := c.Get("bucket")
+		uploader := s3manager.NewUploader(session)
+
 		file, err := c.FormFile("profilepic")
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error()+"error parsing data")
 		}
+		getExt := strings.Split(file.Filename, ".")
+		ext := getExt[len(getExt)-1]
+		if ext != "png" && ext != "jpeg" && ext != "jpg" {
+			return c.JSON(http.StatusInternalServerError, "file not supported, supported: png/jpeg/jpg")
+		}
+		destination := fmt.Sprint("profilepic/", strconv.Itoa(int(data.ID)), "-", data.Name, ".", ext)
+
+		//upload to the s3 bucket
 		src, err := file.Open()
 		if err != nil {
 			return err
 		}
 		defer src.Close()
 
-		// Destination
-		getExt := strings.Split(file.Filename, ".")
-		dst, err := os.Create(fmt.Sprint("uploads/profilepic/", strconv.Itoa(int(data.ID)), "-", data.Name, ".", getExt[len(getExt)-1]))
-		if err != nil {
-			return err
-		}
-		defer dst.Close()
+		buffer := make([]byte, file.Size)
+		src.Read(buffer)
+		body, _ := file.Open()
 
-		// Copy
-		if _, err = io.Copy(dst, src); err != nil {
-			return err
+		up, err := uploader.Upload(&s3manager.UploadInput{
+			Bucket:      aws.String(bucket.(string)),
+			ContentType: aws.String("image/*"),
+			Key:         aws.String(destination),
+			Body:        body,
+		})
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
-		return c.JSON(http.StatusOK, "success update profile picture")
+
+		data.Profile_picture_path = up.Location
+		err = uh.userUsecase.UpdateProfilePic(data)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "success update profile picture",
+			"data":    data,
+		})
 	}
 }

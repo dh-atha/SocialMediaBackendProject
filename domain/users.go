@@ -17,6 +17,7 @@ type UserUsecase interface {
 	GetSpecificUser(id uint) (User, error)
 	UpdateUser(data User, id uint) (User, error)
 	DeleteUser(id uint) error
+	UpdateProfilePic(data User) error
 }
 
 type UserData interface {
@@ -26,4 +27,5 @@ type UserData interface {
 	GetSpecific(id uint) (User, error)
 	Update(data User, id uint) (User, error)
 	Delete(id uint) error
+	UpdateProfilePic(data User) error
 }

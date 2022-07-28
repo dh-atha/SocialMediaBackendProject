@@ -71,3 +71,8 @@ func (us *userUsecase) DeleteUser(id uint) error {
 	err := us.userData.Delete(id)
 	return err
 }
+
+func (us *userUsecase) UpdateProfilePic(data domain.User) error {
+	err := us.userData.UpdateProfilePic(data)
+	return err
+}
