@@ -2,15 +2,17 @@ package delivery
 
 import (
 	"fmt"
-	"io"
 	"net/http"
-	"os"
 	"socialmediabackendproject/config"
 	"socialmediabackendproject/domain"
 	"socialmediabackendproject/feature/common"
 	"socialmediabackendproject/feature/middlewares"
 	"strconv"
+	"strings"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -75,6 +77,10 @@ func (ph *postHandler) InsertPost() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
 
+		session := c.Get("session").(*session.Session)
+		bucket := c.Get("bucket")
+		uploader := s3manager.NewUploader(session)
+
 		// Multipart form
 		form, err := c.MultipartForm()
 		if err != nil {
@@ -91,19 +97,36 @@ func (ph *postHandler) InsertPost() echo.HandlerFunc {
 			}
 			defer src.Close()
 
-			// Destination
-			path := fmt.Sprint("uploads/postimages/", data.ID, "-", strconv.Itoa(key+1), "-", file.Filename)
-			dst, err := os.Create(path)
-			if err != nil {
-				return err
+			getExt := strings.Split(file.Filename, ".")
+			ext := getExt[len(getExt)-1]
+			if ext != "png" && ext != "jpeg" && ext != "jpg" {
+				return c.JSON(http.StatusInternalServerError, "file not supported, supported: png/jpeg/jpg")
 			}
-			defer dst.Close()
+			destination := fmt.Sprint("postimages/", strconv.Itoa(int(data.ID)), "-", strconv.Itoa(key), "-", file.Filename)
 
-			// Copy
-			if _, err = io.Copy(dst, src); err != nil {
-				return err
+			buffer := make([]byte, file.Size)
+			src.Read(buffer)
+			body, _ := file.Open()
+
+			up, err := uploader.Upload(&s3manager.UploadInput{
+				Bucket:      aws.String(bucket.(string)),
+				ContentType: aws.String("image/*"),
+				Key:         aws.String(destination),
+				Body:        body,
+			})
+			if err != nil {
+				return c.JSON(http.StatusInternalServerError, err.Error())
 			}
-			postImagePath = append(postImagePath, path)
+
+			postImagePath = append(postImagePath, up.Location)
+		}
+
+		if len(postImagePath) > 0 {
+			err := ph.PostUsecase.AddPostImages(postImagePath, data.ID)
+			if err != nil {
+				ph.PostUsecase.DeletePost(uint(data.ID), uint(id))
+				return c.JSON(http.StatusInternalServerError, err.Error())
+			}
 		}
 
 		data.Post_images = postImagePath

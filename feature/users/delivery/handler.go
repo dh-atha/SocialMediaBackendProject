@@ -178,20 +178,21 @@ func (uh *userHandler) UpdateProfilePic() echo.HandlerFunc {
 			return c.JSON(http.StatusInternalServerError, err.Error())
 		}
 
-		session := c.Get("session").(*session.Session)
-		bucket := c.Get("bucket")
-		uploader := s3manager.NewUploader(session)
-
 		file, err := c.FormFile("profilepic")
 		if err != nil {
 			return c.JSON(http.StatusBadRequest, err.Error()+"error parsing data")
 		}
+
 		getExt := strings.Split(file.Filename, ".")
 		ext := getExt[len(getExt)-1]
 		if ext != "png" && ext != "jpeg" && ext != "jpg" {
 			return c.JSON(http.StatusInternalServerError, "file not supported, supported: png/jpeg/jpg")
 		}
 		destination := fmt.Sprint("profilepic/", strconv.Itoa(int(data.ID)), "-", data.Name, ".", ext)
+
+		session := c.Get("session").(*session.Session)
+		bucket := c.Get("bucket")
+		uploader := s3manager.NewUploader(session)
 
 		//upload to the s3 bucket
 		src, err := file.Open()

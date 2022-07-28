@@ -14,6 +14,7 @@ type Post struct {
 type PostUsecase interface {
 	GetAllPosts() ([]Post, []User, [][]string, error)
 	AddPost(id uint, data Post) (Post, error)
+	AddPostImages(post []string, postID uint) error
 	GetMyPosts(id uint) ([]Post, User, [][]string, error)
 	GetSpecificPost(id uint) (Post, User, []string, []Comment, []User, error)
 	UpdatePost(id uint, updateData Post) (Post, error)
@@ -23,6 +24,7 @@ type PostUsecase interface {
 type PostData interface {
 	GetAll() ([]Post, []User, [][]string, error)
 	Insert(data Post) (Post, error)
+	InsertPostImages(post []string, postID uint) error
 	GetAllPostsByID(id uint) ([]Post, User, [][]string, error)
 	GetPostByID(id uint) (Post, User, []string, []Comment, []User, error)
 	Update(id uint, updatePost Post) (Post, error)
