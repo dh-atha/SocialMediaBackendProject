@@ -1,6 +1,9 @@
 package factory
 
 import (
+	commentsData "socialmediabackendproject/feature/comments/data"
+	commentDelivery "socialmediabackendproject/feature/comments/delivery"
+	commentUsecase "socialmediabackendproject/feature/comments/usecase"
 	postsData "socialmediabackendproject/feature/posts/data"
 	postDelivery "socialmediabackendproject/feature/posts/delivery"
 	postUsecase "socialmediabackendproject/feature/posts/usecase"
@@ -27,4 +30,8 @@ func InitFactory(e *echo.Echo, db *gorm.DB) {
 	postData := postsData.New(db)
 	postUsecase := postUsecase.New(postData)
 	postDelivery.New(e, postUsecase)
+
+	commentData := commentsData.New(db)
+	commentUsecase := commentUsecase.New(commentData)
+	commentDelivery.New(e, commentUsecase)
 }
