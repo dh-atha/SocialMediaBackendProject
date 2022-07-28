@@ -53,3 +53,16 @@ func (us *userUsecase) GetSpecificUser(id uint) (domain.User, error) {
 	data, err := us.userData.GetSpecific(id)
 	return data, err
 }
+
+func (us *userUsecase) UpdateUser(data domain.User, id uint) (domain.User, error) {
+	if data.Password != "" {
+		hashed, err := bcrypt.GenerateFromPassword([]byte(data.Password), bcrypt.DefaultCost)
+		if err != nil {
+			log.Println("error encrypt password", err)
+			return domain.User{}, err
+		}
+		data.Password = string(hashed)
+	}
+	updateData, err := us.userData.Update(data, id)
+	return updateData, err
+}

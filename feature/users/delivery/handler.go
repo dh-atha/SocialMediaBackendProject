@@ -32,6 +32,7 @@ func New(e *echo.Echo, us domain.UserUsecase) {
 	e.GET("/users", handler.GetAllUser())
 	e.GET("/users/:id", handler.GetSpecificUser())
 	e.GET("/profile", handler.MyProfile(), useJWT)
+	e.PUT("/profile", handler.UpdateProfile(), useJWT)
 	e.PUT("/profilepic", handler.UpdateProfilePic(), useJWT)
 }
 
@@ -131,6 +132,27 @@ func (uh *userHandler) MyProfile() echo.HandlerFunc {
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message": "success showing my profile",
 			"data":    ToGetSpecificUser(data),
+		})
+	}
+}
+
+func (uh *userHandler) UpdateProfile() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var updateData domain.User
+		err := c.Bind(&updateData)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, "error parsing data")
+		}
+
+		userID := common.ExtractData(c)
+		data, err := uh.userUsecase.UpdateUser(updateData, uint(userID))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "success update data",
+			"data":    data,
 		})
 	}
 }
