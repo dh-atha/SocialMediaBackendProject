@@ -25,6 +25,7 @@ func New(e *echo.Echo, ps domain.PostUsecase) {
 	}
 	useJWT := middleware.JWTWithConfig(middlewares.UseJWT([]byte(config.SECRET)))
 	e.GET("/posts", handler.GetAllPosts())
+	e.GET("/posts/:id", handler.GetSpecificPost())
 	e.POST("/myposts", handler.InsertPost(), useJWT)
 	e.GET("/myposts", handler.GetAllMyPosts(), useJWT)
 }
@@ -136,6 +137,47 @@ func (ph *postHandler) GetAllMyPosts() echo.HandlerFunc {
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message": "success get all my posts",
 			"data":    GetAllMyPostsResponse,
+		})
+	}
+}
+
+func (ph *postHandler) GetSpecificPost() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		param := c.Param("id")
+		id, err := strconv.Atoi(param)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, "error parsing id param")
+		}
+
+		post, userdata, postimages, comments, commentUserData, err := ph.PostUsecase.GetSpecificPost(uint(id))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+
+		var GetSpecificPostResponse = GetSpecificPost{
+			ID:                   post.ID,
+			User_ID:              post.User_ID,
+			Username:             userdata.Name,
+			Profile_picture_path: userdata.Profile_picture_path,
+			Caption:              post.Caption,
+			Created_At:           post.Created_At,
+			Updated_At:           post.Updated_At,
+			Post_Images:          postimages,
+		}
+
+		for i := 0; i < len(comments); i++ {
+			GetSpecificPostResponse.Comments = append(GetSpecificPostResponse.Comments, GetComments{
+				ID:                   comments[i].ID,
+				Username:             commentUserData[i].Name,
+				Profile_picture_path: commentUserData[i].Profile_picture_path,
+				Caption:              comments[i].Caption,
+				Created_At:           comments[i].Created_At,
+			})
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "success get post " + param,
+			"data":    GetSpecificPostResponse,
 		})
 	}
 }

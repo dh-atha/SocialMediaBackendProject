@@ -24,6 +24,11 @@ func (ps *postUsecase) AddPost(id uint, data domain.Post) (domain.Post, error) {
 }
 
 func (ps *postUsecase) GetMyPosts(id uint) ([]domain.Post, domain.User, [][]string, error) {
-	posts, userdata, postimages, err := ps.postData.GetPostsByID(id)
+	posts, userdata, postimages, err := ps.postData.GetAllPostsByID(id)
 	return posts, userdata, postimages, err
+}
+
+func (ps *postUsecase) GetSpecificPost(id uint) (domain.Post, domain.User, []string, []domain.Comment, []domain.User, error) {
+	post, userdata, postimages, comments, commentUserData, err := ps.postData.GetPostByID(id)
+	return post, userdata, postimages, comments, commentUserData, err
 }
