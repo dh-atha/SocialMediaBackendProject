@@ -8,7 +8,7 @@ type Post struct {
 	Caption     string `json:"caption" form:"caption"`
 	Created_At  time.Time
 	Updated_At  time.Time
-	Post_images []Post_Image `json:"post_images" form:"post_images"`
+	Post_images []string `json:"post_images" form:"post_images"`
 }
 
 type PostUsecase interface {
