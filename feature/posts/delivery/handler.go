@@ -1,11 +1,15 @@
 package delivery
 
 import (
+	"fmt"
+	"io"
 	"net/http"
+	"os"
 	"socialmediabackendproject/config"
 	"socialmediabackendproject/domain"
 	"socialmediabackendproject/feature/common"
 	"socialmediabackendproject/feature/middlewares"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -21,7 +25,7 @@ func New(e *echo.Echo, ps domain.PostUsecase) {
 	}
 	useJWT := middleware.JWTWithConfig(middlewares.UseJWT([]byte(config.SECRET)))
 	e.GET("/posts", handler.GetAllPosts())
-	e.POST("/posts", handler.InsertPost(), useJWT)
+	e.POST("/myposts", handler.InsertPost(), useJWT)
 	e.GET("/myposts", handler.GetAllMyPosts(), useJWT)
 }
 
@@ -56,15 +60,46 @@ func (ph *postHandler) GetAllPosts() echo.HandlerFunc {
 func (ph *postHandler) InsertPost() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var dataPost domain.Post
-		err := c.Bind(&dataPost)
-		if err != nil {
-			return c.JSON(http.StatusBadRequest, "error parsing data")
+		caption := c.FormValue("caption")
+		if caption == "" {
+			return c.JSON(http.StatusBadRequest, "caption cant be empty")
 		}
+		dataPost.Caption = caption
 
 		id := common.ExtractData(c)
 		data, err := ph.PostUsecase.AddPost(uint(id), dataPost)
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+
+		// Multipart form
+		form, err := c.MultipartForm()
+		if err != nil {
+			return err
+		}
+		files := form.File["post_images"]
+
+		for key, file := range files {
+			// Source
+			src, err := file.Open()
+			if err != nil {
+				return err
+			}
+			defer src.Close()
+
+			// Destination
+			path := fmt.Sprint("uploads/postimages/", data.ID, "-", strconv.Itoa(key+1), "-", file.Filename)
+			dst, err := os.Create(path)
+			if err != nil {
+				return err
+			}
+			defer dst.Close()
+
+			// Copy
+			if _, err = io.Copy(dst, src); err != nil {
+				return err
+			}
+
 		}
 
 		return c.JSON(http.StatusOK, map[string]interface{}{
