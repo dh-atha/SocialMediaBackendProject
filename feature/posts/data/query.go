@@ -50,7 +50,7 @@ func (pd *postData) Insert(data domain.Post) (domain.Post, error) {
 	return postData.ToDomain(), nil
 }
 
-func (pd *postData) GetPostsByID(id uint) ([]domain.Post, domain.User, [][]string, error) {
+func (pd *postData) GetAllPostsByID(id uint) ([]domain.Post, domain.User, [][]string, error) {
 	var postData []Post
 	pd.db.Where("user_id", id).Find(&postData)
 	if len(postData) < 1 {
@@ -70,4 +70,30 @@ func (pd *postData) GetPostsByID(id uint) ([]domain.Post, domain.User, [][]strin
 	}
 
 	return postConvertToDomain, userData, postimages, nil
+}
+
+func (pd *postData) GetPostByID(id uint) (domain.Post, domain.User, []string, []domain.Comment, []domain.User, error) {
+	var postData Post
+	err := pd.db.Where("id = ?", id).First(&postData).Error
+	if err != nil {
+		return domain.Post{}, domain.User{}, []string{}, []domain.Comment{}, []domain.User{}, err
+	}
+
+	var userData domain.User
+	pd.db.Raw("SELECT name, profile_picture_path FROM users WHERE id = ?", postData.User_ID).Scan(&userData)
+
+	var postimages []string
+	pd.db.Raw("SELECT image_path FROM post_images WHERE post_id = ?", id).Scan(&postimages)
+
+	var comments []domain.Comment
+	pd.db.Raw("SELECT id, user_id, caption, created_at FROM comments WHERE post_id = ? AND deleted_at is NULL", id).Scan(&comments)
+
+	var commentUserData []domain.User
+	for i := 0; i < len(comments); i++ {
+		var tmpCommentUserData domain.User
+		pd.db.Raw("SELECT name, profile_picture_path FROM users WHERE id = ?", comments[i].User_ID).Scan(&tmpCommentUserData)
+		commentUserData = append(commentUserData, tmpCommentUserData)
+	}
+
+	return postData.ToDomain(), userData, postimages, comments, commentUserData, nil
 }
