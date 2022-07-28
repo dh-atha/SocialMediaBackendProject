@@ -100,6 +100,7 @@ func (ph *postHandler) InsertPost() echo.HandlerFunc {
 			getExt := strings.Split(file.Filename, ".")
 			ext := getExt[len(getExt)-1]
 			if ext != "png" && ext != "jpeg" && ext != "jpg" {
+				ph.PostUsecase.DeletePost(uint(data.ID), uint(id))
 				return c.JSON(http.StatusInternalServerError, "file not supported, supported: png/jpeg/jpg")
 			}
 			destination := fmt.Sprint("postimages/", strconv.Itoa(int(data.ID)), "-", strconv.Itoa(key), "-", file.Filename)
