@@ -23,6 +23,11 @@ func (ps *postUsecase) AddPost(id uint, data domain.Post) (domain.Post, error) {
 	return data, err
 }
 
+func (ps *postUsecase) AddPostImages(images []string, postID uint) error {
+	err := ps.postData.InsertPostImages(images, postID)
+	return err
+}
+
 func (ps *postUsecase) GetMyPosts(id uint) ([]domain.Post, domain.User, [][]string, error) {
 	posts, userdata, postimages, err := ps.postData.GetAllPostsByID(id)
 	return posts, userdata, postimages, err

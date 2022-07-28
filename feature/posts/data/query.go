@@ -50,6 +50,16 @@ func (pd *postData) Insert(data domain.Post) (domain.Post, error) {
 	return postData.ToDomain(), nil
 }
 
+func (pd *postData) InsertPostImages(data []string, postID uint) error {
+	for i := 0; i < len(data); i++ {
+		err := pd.db.Exec("INSERT INTO post_images (post_id, image_path, created_at, updated_at) VALUES (?, ?, now(), now())", postID, data[i]).Error
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (pd *postData) GetAllPostsByID(id uint) ([]domain.Post, domain.User, [][]string, error) {
 	var postData []Post
 	pd.db.Where("user_id", id).Find(&postData)
