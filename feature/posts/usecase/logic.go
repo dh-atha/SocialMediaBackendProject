@@ -37,3 +37,8 @@ func (ps *postUsecase) UpdatePost(id uint, updateData domain.Post) (domain.Post,
 	data, err := ps.postData.Update(id, updateData)
 	return data, err
 }
+
+func (ps *postUsecase) DeletePost(id uint, userID uint) error {
+	err := ps.postData.Delete(id, userID)
+	return err
+}

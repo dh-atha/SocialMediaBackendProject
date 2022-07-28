@@ -29,6 +29,7 @@ func New(e *echo.Echo, ps domain.PostUsecase) {
 	e.POST("/myposts", handler.InsertPost(), useJWT)
 	e.GET("/myposts", handler.GetAllMyPosts(), useJWT)
 	e.PUT("/myposts/:id", handler.UpdatePost(), useJWT)
+	e.DELETE("/myposts/:id", handler.DeletePost(), useJWT)
 }
 
 func (ph *postHandler) GetAllPosts() echo.HandlerFunc {
@@ -207,5 +208,22 @@ func (ph *postHandler) UpdatePost() echo.HandlerFunc {
 			"message": "success update post",
 			"data":    data,
 		})
+	}
+}
+
+func (ph *postHandler) DeletePost() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		param := c.Param("id")
+		id, err := strconv.Atoi(param)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, "error parsing param")
+		}
+
+		err = ph.PostUsecase.DeletePost(uint(id), uint(common.ExtractData(c)))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+
+		return c.JSON(http.StatusOK, "success delete post")
 	}
 }
