@@ -3,11 +3,12 @@ package domain
 import "time"
 
 type Post struct {
-	ID         uint
-	User_ID    uint
-	Caption    string `json:"caption" form:"caption"`
-	Created_At time.Time
-	Updated_At time.Time
+	ID          uint
+	User_ID     uint
+	Caption     string `json:"caption" form:"caption"`
+	Created_At  time.Time
+	Updated_At  time.Time
+	Post_images []Post_Image `json:"post_images" form:"post_images"`
 }
 
 type PostUsecase interface {
