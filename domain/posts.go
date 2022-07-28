@@ -16,6 +16,7 @@ type PostUsecase interface {
 	AddPost(id uint, data Post) (Post, error)
 	GetMyPosts(id uint) ([]Post, User, [][]string, error)
 	GetSpecificPost(id uint) (Post, User, []string, []Comment, []User, error)
+	UpdatePost(id uint, updateData Post) (Post, error)
 }
 
 type PostData interface {
@@ -23,4 +24,5 @@ type PostData interface {
 	Insert(data Post) (Post, error)
 	GetAllPostsByID(id uint) ([]Post, User, [][]string, error)
 	GetPostByID(id uint) (Post, User, []string, []Comment, []User, error)
+	Update(id uint, updatePost Post) (Post, error)
 }

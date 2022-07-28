@@ -28,6 +28,7 @@ func New(e *echo.Echo, ps domain.PostUsecase) {
 	e.GET("/posts/:id", handler.GetSpecificPost())
 	e.POST("/myposts", handler.InsertPost(), useJWT)
 	e.GET("/myposts", handler.GetAllMyPosts(), useJWT)
+	e.PUT("/myposts/:id", handler.UpdatePost(), useJWT)
 }
 
 func (ph *postHandler) GetAllPosts() echo.HandlerFunc {
@@ -178,6 +179,33 @@ func (ph *postHandler) GetSpecificPost() echo.HandlerFunc {
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message": "success get post " + param,
 			"data":    GetSpecificPostResponse,
+		})
+	}
+}
+
+func (ph *postHandler) UpdatePost() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		param := c.Param("id")
+		postID, err := strconv.Atoi(param)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, "error parsing param")
+		}
+
+		var updateData domain.Post
+		err = c.Bind(&updateData)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, "error parsing reqBody")
+		}
+		updateData.User_ID = uint(common.ExtractData(c))
+
+		data, err := ph.PostUsecase.UpdatePost(uint(postID), updateData)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+
+		return c.JSON(http.StatusOK, map[string]interface{}{
+			"message": "success update post",
+			"data":    data,
 		})
 	}
 }

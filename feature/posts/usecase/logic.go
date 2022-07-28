@@ -32,3 +32,8 @@ func (ps *postUsecase) GetSpecificPost(id uint) (domain.Post, domain.User, []str
 	post, userdata, postimages, comments, commentUserData, err := ps.postData.GetPostByID(id)
 	return post, userdata, postimages, comments, commentUserData, err
 }
+
+func (ps *postUsecase) UpdatePost(id uint, updateData domain.Post) (domain.Post, error) {
+	data, err := ps.postData.Update(id, updateData)
+	return data, err
+}
