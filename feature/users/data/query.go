@@ -66,3 +66,14 @@ func (ud *userData) GetSpecific(id uint) (domain.User, error) {
 
 	return data.ToDomain(), nil
 }
+
+func (ud *userData) Update(updateData domain.User, id uint) (domain.User, error) {
+	var currentData User
+	err := ud.db.Model(&User{}).Where("id = ?", id).Updates(updateData).Error
+	if err != nil {
+		return domain.User{}, err
+	}
+
+	ud.db.Where("id = ?", id).First(&currentData)
+	return currentData.ToDomain(), nil
+}
