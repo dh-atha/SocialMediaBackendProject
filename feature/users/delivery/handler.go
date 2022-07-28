@@ -33,6 +33,7 @@ func New(e *echo.Echo, us domain.UserUsecase) {
 	e.GET("/users/:id", handler.GetSpecificUser())
 	e.GET("/profile", handler.MyProfile(), useJWT)
 	e.PUT("/profile", handler.UpdateProfile(), useJWT)
+	e.DELETE("/profile", handler.DeleteProfile(), useJWT)
 	e.PUT("/profilepic", handler.UpdateProfilePic(), useJWT)
 }
 
@@ -154,6 +155,17 @@ func (uh *userHandler) UpdateProfile() echo.HandlerFunc {
 			"message": "success update data",
 			"data":    data,
 		})
+	}
+}
+
+func (uh *userHandler) DeleteProfile() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		err := uh.userUsecase.DeleteUser(uint(common.ExtractData(c)))
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, err.Error())
+		}
+
+		return c.JSON(http.StatusOK, "success delete user")
 	}
 }
 

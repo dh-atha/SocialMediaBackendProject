@@ -16,6 +16,7 @@ type UserUsecase interface {
 	GetAllUser() ([]User, error)
 	GetSpecificUser(id uint) (User, error)
 	UpdateUser(data User, id uint) (User, error)
+	DeleteUser(id uint) error
 }
 
 type UserData interface {
@@ -24,4 +25,5 @@ type UserData interface {
 	GetAll() ([]User, error)
 	GetSpecific(id uint) (User, error)
 	Update(data User, id uint) (User, error)
+	Delete(id uint) error
 }

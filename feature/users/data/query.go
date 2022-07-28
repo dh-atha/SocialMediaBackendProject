@@ -77,3 +77,21 @@ func (ud *userData) Update(updateData domain.User, id uint) (domain.User, error)
 	ud.db.Where("id = ?", id).First(&currentData)
 	return currentData.ToDomain(), nil
 }
+
+func (ud *userData) Delete(id uint) error {
+	var userData User
+	err := ud.db.Where("id = ?", id).First(&userData).Error
+	if err != nil {
+		return err
+	}
+
+	ud.db.Exec("update posts set deleted_at = now() where user_id = ?;", id)
+	ud.db.Exec("update comments set deleted_at = now() where user_id = ?", id)
+
+	err = ud.db.Delete(&userData).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
