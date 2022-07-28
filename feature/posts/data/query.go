@@ -97,3 +97,23 @@ func (pd *postData) GetPostByID(id uint) (domain.Post, domain.User, []string, []
 
 	return postData.ToDomain(), userData, postimages, comments, commentUserData, nil
 }
+
+func (pd *postData) Update(id uint, updateData domain.Post) (domain.Post, error) {
+	var currentData Post
+	err := pd.db.Where("id = ?", id).First(&currentData).Error
+	if err != nil {
+		return domain.Post{}, err
+	}
+
+	if currentData.User_ID != updateData.User_ID {
+		return domain.Post{}, errors.New("post not yours")
+	}
+
+	currentData.Caption = updateData.Caption
+	err = pd.db.Save(&currentData).Error
+	if err != nil {
+		return domain.Post{}, errors.New("error update data")
+	}
+
+	return currentData.ToDomain(), nil
+}
