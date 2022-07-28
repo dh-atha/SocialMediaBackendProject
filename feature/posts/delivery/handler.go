@@ -79,6 +79,7 @@ func (ph *postHandler) InsertPost() echo.HandlerFunc {
 		}
 		files := form.File["post_images"]
 
+		var postImagePath []string
 		for key, file := range files {
 			// Source
 			src, err := file.Open()
@@ -99,9 +100,10 @@ func (ph *postHandler) InsertPost() echo.HandlerFunc {
 			if _, err = io.Copy(dst, src); err != nil {
 				return err
 			}
-
+			postImagePath = append(postImagePath, path)
 		}
 
+		data.Post_images = postImagePath
 		return c.JSON(http.StatusOK, map[string]interface{}{
 			"message": "success insert post",
 			"data":    data,
